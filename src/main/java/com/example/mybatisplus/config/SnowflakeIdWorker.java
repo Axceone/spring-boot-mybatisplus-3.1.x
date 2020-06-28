@@ -163,12 +163,17 @@ public class SnowflakeIdWorker {
     }
  
     private static Long getDataCenterId(){
-        int[] ints = StringUtils.toCodePoints(SystemUtils.getHostName());
-        int sums = 0;
-        for (int i: ints) {
-            sums += i;
+        try {
+            int[] ints = new int[0];
+            ints = StringUtils.toCodePoints(Inet4Address.getLocalHost().getHostName());
+            int sums = 0;
+            for (int i: ints) {
+                sums += i;
+            }
+            return (long)(sums % 32);
+        } catch (UnknownHostException e) {
+            return RandomUtils.nextLong(0,31);
         }
-        return (long)(sums % 32);
     }
  
  
@@ -187,16 +192,22 @@ public class SnowflakeIdWorker {
     public static void main(String[] args) {
         System.out.println(System.currentTimeMillis());
         long startTime = System.nanoTime();
-        CountDownLatch countDownLatch = new CountDownLatch(10);
         for (int i = 0; i < 10; i++) {
-            new Thread(() ->{
                 for (int j = 0; j < 10000; j++) {
                     long id = SnowflakeIdWorker.generateId();
                     System.out.println(id);
                 }
-                countDownLatch.countDown();
-            }).start();
         }
+//        CountDownLatch countDownLatch = new CountDownLatch(10);
+//        for (int i = 0; i < 10; i++) {
+//            new Thread(() ->{
+//                for (int j = 0; j < 10000; j++) {
+//                    long id = SnowflakeIdWorker.generateId();
+//                    System.out.println(id);
+//                }
+//                countDownLatch.countDown();
+//            }).start();
+//        }
         System.out.println((System.nanoTime()-startTime)/1000000+"ms");
     }
 }
