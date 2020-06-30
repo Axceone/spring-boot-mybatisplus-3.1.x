@@ -1,4 +1,4 @@
-package com.example.designpattern.observer;
+package com.example.designpattern.observer.custompattern;
 
 /**
  * @author liuguobin
